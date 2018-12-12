@@ -7,6 +7,8 @@ name = "pypi"
 jinja2 = "*"
 
 [dev-packages]
+requests = "*"
+django = "*"
 
 [requires]
 python_version = "3.6"

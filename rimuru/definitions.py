@@ -15,7 +15,7 @@ Param = namedtuple(
 
 Response = namedtuple(
     'Response',
-    ('header', 'status_code', 'body')
+    ('headers', 'status_code', 'body', 'type')
 )
 
 
