@@ -3,6 +3,8 @@ __author__ = 'gzp'
 
 import os
 import inspect
+import json
+
 from jinja2 import Environment, PackageLoader
 
 from rimuru.definitions import (
@@ -17,6 +19,10 @@ env.filters['success_responses_filter'] = filters.success_responses_filter
 env.filters['error_responses_filter'] = filters.error_responses_filter
 
 
+def decode_utf8(bytes):
+    return bytes.decode('utf-8')
+
+
 class APIDocumentGenerator(object):
     template = 'zh_hans_doc.md'
     env = env
@@ -26,11 +32,20 @@ class APIDocumentGenerator(object):
     response_class = Response
 
     type_mapper = type_mapper
+    response_body_handlers = (
+        ('text/html', decode_utf8, 'html'),
+        ('application/json', json.dumps, 'json'),
+    )
 
-    def __init__(self, name, method, url, note=''):
-        self.name = name
+    def __init__(self, method, url, name='', note=''):
+        self.name = name if name else '%s %s' % (method, url)
         self.method = method.upper()
         self.url = url
+
+        self.response_body_handlers_map = {
+            content_type: (handler, body_type)
+            for content_type, handler, body_type in self.response_body_handlers
+        }
 
         self.note = note
 
@@ -61,9 +76,25 @@ class APIDocumentGenerator(object):
             )
         )
 
-    def add_response(self, status_code, body, header=''):
+    def add_response(self, status_code, body, headers=None, body_type=None):
+        headers = headers if headers else {}
+        headers = '\n'.join(['%s: %s' % (key, value) for key, value in headers.items()])
+        body_type = body_type if body_type else ''
         self.responses.add(
             self.response_class(
-                status_code=status_code, body=body, header=header
+                status_code=status_code, body=body, headers=headers, type=body_type
             )
         )
+
+    def convert_response_body(self, body, content_type):
+        result = self.response_body_handlers_map.get(content_type)
+        body_type = None
+        if result:
+            handler, body_type = result
+            body = handler(body)
+
+        return body, body_type
+
+    @property
+    def exist_response(self):
+        return len(self.responses) > 0
