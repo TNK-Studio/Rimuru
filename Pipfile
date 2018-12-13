@@ -5,8 +5,12 @@ name = "pypi"
 
 [packages]
 jinja2 = "*"
+werkzeug = "*"
 
 [dev-packages]
+requests = "*"
+django = "*"
+flask = "*"
 
 [requires]
 python_version = "3.6"
