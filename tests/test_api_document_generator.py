@@ -17,7 +17,7 @@ class APIDocumentGeneratorTestCase(unittest.TestCase):
         self.api_doc_gen.add_response(400, json.dumps({'msg': 'fail'}), body_type='json')
 
     def tearDown(self):
-        pass
+        self.api_doc_gen.delete()
 
     def test_render(self):
         results = self.api_doc_gen.render()
@@ -25,3 +25,4 @@ class APIDocumentGeneratorTestCase(unittest.TestCase):
 
     def test_save(self):
         self.api_doc_gen.save('.')
+        self.assertEqual(self.api_doc_gen.saved, True)
