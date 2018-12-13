@@ -53,7 +53,7 @@
 状态码 `{{response.status_code}}`
 
 ```{{response.type}}
-{{response.body}}
+{{response.body | safe}}
 ```
 {% endfor %}
 {% endif %}
