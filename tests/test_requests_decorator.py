@@ -50,7 +50,12 @@ class RequestsDecoratorTestCase(unittest.TestCase):
         self.assertEqual(generator_response.status_code, response.status_code)
         self.assertEqual(response.json(), json.loads(generator_response.body))
 
-        self.client.get(url, params={'name': 'A'}, requires={'name': False}, add_response=False)
+        self.client.get(
+            url, params={'name': 'A'},
+            headers={'TEST_HEADER': 'test'},
+            requires={'name': False},
+            add_response=False
+        )
         self.assertGreater(len(generator.params), 0)
         generator_params = generator.params[0]
 

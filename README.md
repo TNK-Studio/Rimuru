@@ -25,7 +25,7 @@ class APITestCase(unittest.TestCase):
     def test_api(self):
         url = 'http://127.0.0.1:5000/api/books'
         method = 'GET'
-        name = '书籍列表接口'
+        name = '书列表接口'
         
         self.api_document.set_api_name(method=method, url=url, name=name)
         response = self.client.get(url)
@@ -34,7 +34,12 @@ class APITestCase(unittest.TestCase):
 	    self.assertEqual(response.status_code, 200)
 	    	...
         """
-        self.client.get(url, params={'name': 'A'}, requires={'name': False}, add_response=False)
+        self.client.get(
+            url, params={'name': 'A'},
+            headers={'TEST_HEADER': 'test'},
+            requires={'name': False},
+            add_response=False
+        )
         
         url = 'http://127.0.0.1:5000/api/books/<int:id>'
         method = 'GET'
@@ -59,7 +64,7 @@ class APITestCase(unittest.TestCase):
     def test_api(self):
         url = 'http://127.0.0.1:5000/api/books'
         method = 'GET'
-        name = '书籍列表接口'
+        name = '书列表接口'
 
         self.api_document.set_api_name(method=method, url=url, name=name)
         response = self.client.get(url)
@@ -86,77 +91,74 @@ class APITestCase(unittest.TestCase):
         self.api_document.save(file_path='tests/')
 ```
 ### 生成文档
+#### 书籍列表接口.md
 
-`书籍列表接口.md`
 ```markdown
-    ## 书列表接口
+## 书列表接口
 
-    ### 请求地址
+### 请求地址
 
-    `GET`  `http://127.0.0.1:5000/api/books`
+`GET`  `http://127.0.0.1:5000/api/books`
 
-    ### 请求头
+### 请求头
 
-    | 参数名  | 必填 | 参考值                           |
-    | ------- | ---- | -------------------------------- |
-    |TEST_HEADER|True|test|
+| 参数名  | 必填 | 参考值                           |
+| ------- | ---- | -------------------------------- |
+|TEST_HEADER|True|test|
 
-    ### 请求参数
+### 请求参数
 
-    | 参数名   | 类型   | 必填 | 描述 | 默认值 | 参考值 |
-    | -------- | ------ | ---- | ---- | ------ | ------ |
-    |name|String|False|||A|
+| 参数名   | 类型   | 必填 | 描述 | 默认值 | 参考值 |
+| -------- | ------ | ---- | ---- | ------ | ------ |
+|name|String|False|||A|
 
-    ### 返回正确
+### 返回正确
 
-    状态码 `200`
-
-    ```json
-    [
-        {
-            "id": 1,
-            "name": "A"
-        },
-        {
-            "id": 2,
-            "name": "B"
-        },
-        {
-            "id": 3,
-            "name": "C"
-        }
-    ]
-```
-
-```
-
-`书详情接口.md`
-```markdown
-
-    ## 书详情接口
-
-    ### 请求地址
-
-    `GET`  `http://127.0.0.1:5000/api/books/<int:id>`
-
-    ### 返回正确
-
-    状态码 `200`
-
-    ```json
+状态码 `200`
+​```json
+[
+    {
+        "id": 1,
+        "name": "A"
+    },
     {
         "id": 2,
         "name": "B"
-    }
-    ```
-    ### 返回错误
-
-    状态码 `404`
-
-    ```json
+    },
     {
-        "msg": "Not Found"
+        "id": 3,
+        "name": "C"
     }
-    ```
+]
+​```
+```
+
+#### 书详情接口.md
+```markdown
+## 书详情接口
+
+### 请求地址
+
+`GET`  `http://127.0.0.1:5000/api/books/<int:id>`
+
+### 返回正确
+
+状态码 `200`
+
+​```json
+{
+    "id": 2,
+    "name": "B"
+}
+​```
+### 返回错误
+
+状态码 `404`
+
+​```json
+{
+    "msg": "Not Found"
+}
+​```
 
 ```
