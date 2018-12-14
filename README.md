@@ -53,7 +53,7 @@ class APITestCase(unittest.TestCase):
 ```
 
 ### 用django.test.client模块进行测试
-```
+```python
 import django.test import TestCase
 
 class APITestCase(unittest.TestCase):
