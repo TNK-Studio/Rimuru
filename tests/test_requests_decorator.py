@@ -12,12 +12,12 @@ from rimuru.core import doc_client, APIDocument
 from rimuru.utils.jinja2.filters import (
     success_responses_filter, error_responses_filter
 )
-from .test_service.flask import app
+from .test_service.flask_ import app
 
 os.environ['NO_PROXY'] = 'localhost'
 
 
-class DocClientTestCase(unittest.TestCase):
+class RequestsDecoratorTestCase(unittest.TestCase):
     def setUp(self):
         self.api_document = APIDocument()
         requests = doc_client(self.api_document, requests_module)
