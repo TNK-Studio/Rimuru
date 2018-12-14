@@ -52,7 +52,7 @@ class APITestCase(unittest.TestCase):
         self.api_document.save(file_path='tests/')
 ```
 
-### 用`django.test.client`模块进行测试
+### 用django.test.client模块进行测试
 ```
 import django.test import TestCase
 
