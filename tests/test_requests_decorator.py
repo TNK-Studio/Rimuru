@@ -51,6 +51,7 @@ class RequestsDecoratorTestCase(unittest.TestCase):
         self.assertEqual(response.json(), json.loads(generator_response.body))
 
         self.client.get(url, params={'name': 'A'}, requires={'name': False}, add_response=False)
+        self.assertGreater(len(generator.params), 0)
         generator_params = generator.params[0]
 
         # 确定参数都在文档中
@@ -72,7 +73,7 @@ class RequestsDecoratorTestCase(unittest.TestCase):
         self.assertEqual(json.loads(success_responses_filter(generator.responses)[0].body), success_response.json())
         self.assertEqual(json.loads(error_responses_filter(generator.responses)[0].body), error_response.json())
 
-        self.api_document.save()
+        self.api_document.save(file_path='tests/')
         for each_generator in self.api_document.generators.values():
             self.assertEqual(each_generator.saved, True)
             with open(each_generator.file_path, 'r', encoding='utf-8') as f:
