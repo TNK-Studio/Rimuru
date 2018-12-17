@@ -1,4 +1,6 @@
 # Rimuru
+[![Build Status](https://travis-ci.org/TNK-Studio/Rimuru.svg?branch=master)](https://travis-ci.org/TNK-Studio/Rimuru)
+[![codecov](https://codecov.io/gh/elfgzp/Rimuru/branch/master/graph/badge.svg)](https://codecov.io/gh/elfgzp/Rimuru)
 
 📖用单元测试自动生成接口文档
 
