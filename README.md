@@ -12,6 +12,8 @@
 
 ## 使用方法
 
+`pip install rimuru`
+
 ### 用requests模块进行测试
 
 ```python
