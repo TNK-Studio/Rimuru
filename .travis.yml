@@ -1,0 +1,9 @@
+language: python
+python:
+  - 3.6
+install:
+  - pipenv install --dev
+script:
+  - python -m pytest tests --cov=rimuru --cov-report=xml
+after_success:
+  - codecov
