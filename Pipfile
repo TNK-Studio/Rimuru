@@ -11,6 +11,11 @@ werkzeug = "*"
 requests = "*"
 django = "*"
 flask = "*"
+flake8 = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-flake8 = "*"
+codecov = "*"
 
 [requires]
 python_version = "3.6"
