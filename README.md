@@ -19,7 +19,7 @@
 ```python
 import unittest
 import requests as requests_module
-from rimuru.core import doc_client, APIDocument
+from rimuru import doc_client, APIDocument
 
 class APITestCase(unittest.TestCase):
     def setUp(self):
@@ -59,11 +59,12 @@ class APITestCase(unittest.TestCase):
 ### 用django.test.client模块进行测试
 ```python
 import django.test import TestCase
+from rimuru import doc_client, APIDocument
 
 class APITestCase(unittest.TestCase):
     def setUp(self):
         self.api_document = APIDocument()
-		self.client = doc_client(self.api_document, self.client)
+	self.client = doc_client(self.api_document, self.client)
 
     def test_api(self):
         url = 'http://127.0.0.1:5000/api/books'
