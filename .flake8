@@ -1,0 +1,14 @@
+[flake8]
+ignore = W292, W391, E225, E226
+exclude =
+    *migrations*,
+    *.pyc,
+    .git,
+    __init__.py,
+    test_*.py,
+    *tests*,
+max-line-length = 120
+max-complexity = 12
+format = pylint
+statistics = True
+count = True

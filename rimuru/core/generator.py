@@ -95,15 +95,15 @@ class APIDocumentGenerator(object):
 
     def add_headers(self, name, value, required=True, *kwargs):
         self._headers[name] = self.header_class(
-                name=name, value=value, required=required, *kwargs
-            )
+            name=name, value=value, required=required, *kwargs
+        )
 
     def add_params(self, name, value, required=True, desc='', param_type=None, default=''):
         param_type = param_type if param_type else self.type_mapper.get(type(value), 'String')
 
         self._params[name] = self.param_class(
-                    name=name, value=value, required=required, desc=desc, type=param_type, default=default
-                )
+            name=name, value=value, required=required, desc=desc, type=param_type, default=default
+        )
 
     def add_response(self, status_code, body, headers=None, body_type=None):
         headers = headers if headers else {}
