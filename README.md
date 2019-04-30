@@ -11,6 +11,10 @@
 - [x] django.test.client
 - [ ] flask.testing.FlaskClient
 
+## 生成格式
+- [x] markdown
+- [ ] swagger
+
 ## 使用方法
 
 `pip install rimuru`
