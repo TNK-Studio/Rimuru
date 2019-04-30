@@ -29,7 +29,7 @@ from rimuru import doc_client, APIDocument
 class APITestCase(unittest.TestCase):
     def setUp(self):
         self.api_document = APIDocument()
-		self.client = doc_client(self.api_document, requests_module)
+	self.client = doc_client(self.api_document, requests_module)
        
     def test_api(self):
         url = 'http://127.0.0.1:5000/api/books'
