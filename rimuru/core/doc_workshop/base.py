@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 __author__ = 'gzp'
 
+from typing import Dict
 from urllib.parse import urlparse, urlunparse
-from werkzeug.routing import Map, Rule
+from werkzeug.routing import Map, Rule, MapAdapter
 from werkzeug.exceptions import NotFound
 
-from rimuru.core.generator import APIDocumentGenerator
+from rimuru.core.doc_generator import APIDocGenerator
 
 
-class APIDocument(object):
+class APIDocWorkshop(object):
     """
     Used to manage document generators
     """
-    generator_class = APIDocumentGenerator
+    generator_class = APIDocGenerator
 
     def __init__(self, default_domain='localhost', default_protocol='http'):
         self.default_domain = default_domain
         self.default_protocol = default_protocol
-        self.index = APIDocumentIndex()
+        self.index = APIDocRouteMatcher()
         self.generators = {}
         self.api_document = {}
 
@@ -55,12 +56,12 @@ class APIDocument(object):
         rel_path = self.match_path(netloc, path)
 
         generator_key = (method, netloc, rel_path)
-        generator = self.generators.get(generator_key)
-        if not generator:
+        doc_generator = self.generators.get(generator_key)
+        if not doc_generator:
             self.set_generator(method, url)
-            generator = self.generators.get(generator_key)
+            doc_generator = self.generators.get(generator_key)
 
-        return generator
+        return doc_generator
 
     def set_api_name(self, method, url, name):
         _, netloc, path = self.parse_url(url)
@@ -70,13 +71,13 @@ class APIDocument(object):
         self.api_document[name] = (method, netloc, path)
 
     def save(self, file_path='.'):
-        for generator in self.generators.values():
-            if generator.exist_response:
-                generator.save(file_path)
+        for doc_generator in self.generators.values():
+            if doc_generator.exist_response:
+                doc_generator.save(file_path)
 
     def delete(self):
-        for generator in self.generators.values():
-            generator.delete()
+        for doc_generator in self.generators.values():
+            doc_generator.delete()
 
     def match_path(self, netloc, path):
         rel_path = self.index.match(netloc, path)
@@ -86,10 +87,13 @@ class APIDocument(object):
         return rel_path
 
 
-class APIDocumentIndex(object):
+class APIDocRouteMatcher(object):
+    """
+    Used to match which route the request address belongs to.
+    """
     def __init__(self):
-        self.maps = {}
-        self.maps_adapter = {}
+        self.maps: Dict[str, Map] = {}
+        self.maps_adapter: Dict[str, MapAdapter] = {}
 
     def match(self, netloc, path):
         adapter = self.maps_adapter.get(netloc, None)
@@ -101,8 +105,8 @@ class APIDocumentIndex(object):
             real_path = None
         return real_path
 
-    def add(self, netloc, path):
+    def add(self, netloc, path, server_name='localhost'):
         rule_map = self.maps.get(netloc, Map([]))
         rule_map.add(Rule(path, endpoint=path))
         self.maps[netloc] = rule_map
-        self.maps_adapter[netloc] = rule_map.bind('index')
+        self.maps_adapter[netloc] = rule_map.bind(server_name)

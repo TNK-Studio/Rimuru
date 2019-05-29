@@ -8,7 +8,7 @@ import django
 from django.test import TestCase
 from django.test.utils import setup_test_environment
 
-from rimuru import doc_client, APIDocument
+from rimuru import doc_client, APIDocWorkshop
 from rimuru.utils.jinja2.filters import (
     success_responses_filter, error_responses_filter
 )
@@ -26,7 +26,7 @@ django.setup()
 class DjangoTestClientDecoratorTestCase(TestCase):
     def setUp(self):
         setup_test_environment(debug=True)
-        self.api_document = APIDocument()
+        self.api_document = APIDocWorkshop()
         self.client = doc_client(self.api_document, self.client)
 
     def tearDown(self):

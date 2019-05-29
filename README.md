@@ -24,11 +24,11 @@
 ```python
 import unittest
 import requests as requests_module
-from rimuru import doc_client, APIDocument
+from rimuru import doc_client, APIDocWorkshop
 
 class APITestCase(unittest.TestCase):
     def setUp(self):
-        self.api_document = APIDocument()
+        self.api_document = APIDocWorkshop()
 	self.client = doc_client(self.api_document, requests_module)
        
     def test_api(self):
@@ -64,11 +64,11 @@ class APITestCase(unittest.TestCase):
 ### 用django.test.client模块进行测试
 ```python
 import django.test import TestCase
-from rimuru import doc_client, APIDocument
+from rimuru import doc_client, APIDocWorkshop
 
 class APITestCase(unittest.TestCase):
     def setUp(self):
-        self.api_document = APIDocument()
+        self.api_document = APIDocWorkshop()
 	self.client = doc_client(self.api_document, self.client)
 
     def test_api(self):

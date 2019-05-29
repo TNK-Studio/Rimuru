@@ -8,7 +8,7 @@ import json
 import requests as requests_module
 from multiprocessing import Process
 
-from rimuru import doc_client, APIDocument
+from rimuru import doc_client, APIDocWorkshop
 from rimuru.utils.jinja2.filters import (
     success_responses_filter, error_responses_filter
 )
@@ -19,7 +19,7 @@ os.environ['NO_PROXY'] = 'localhost'
 
 class RequestsDecoratorTestCase(unittest.TestCase):
     def setUp(self):
-        self.api_document = APIDocument()
+        self.api_document = APIDocWorkshop()
         requests = doc_client(self.api_document, requests_module)
         self.client = requests
 

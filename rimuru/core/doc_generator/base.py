@@ -22,7 +22,7 @@ env.filters['success_responses_filter'] = filters.success_responses_filter
 env.filters['error_responses_filter'] = filters.error_responses_filter
 
 
-class APIDocumentGenerator(object):
+class APIDocGenerator(object):
     template = 'zh_hans_doc.md'
     env = env
 
