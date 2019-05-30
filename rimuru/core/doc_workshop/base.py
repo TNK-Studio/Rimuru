@@ -1,26 +1,36 @@
 # -*- coding: utf-8 -*-
 __author__ = 'gzp'
 
-from typing import Dict
+from abc import ABC
+from typing import Optional, Dict, Tuple
 from urllib.parse import urlparse, urlunparse
 from werkzeug.routing import Map, Rule, MapAdapter
 from werkzeug.exceptions import NotFound
 
-from rimuru.core.doc_generator import APIDocGenerator
+from rimuru.core.doc_generator import (
+    APIDocGenerator
+)
 
 
-class APIDocWorkshop(object):
+class APIDocWorkshop(ABC):
     """
     Used to manage document generators
     """
-    generator_class = APIDocGenerator
+    generator_class: Optional[type(APIDocGenerator)] = None
 
-    def __init__(self, default_domain='localhost', default_protocol='http'):
-        self.default_domain = default_domain
-        self.default_protocol = default_protocol
-        self.index = APIDocRouteMatcher()
-        self.generators = {}
-        self.api_document = {}
+    def __init__(
+            self,
+            default_domain: str = 'localhost',
+            default_protocol: str = 'http'
+    ):
+        if not self.generator_class:
+            raise NotImplementedError
+
+        self.default_domain: str = default_domain
+        self.default_protocol: str = default_protocol
+        self.index: APIDocRouteMatcher = APIDocRouteMatcher()
+        self.generators: Dict[Tuple[str, str, str], APIDocGenerator] = {}
+        self.api_document: Dict[str, Tuple[str, str, str]] = {}
 
     def __getitem__(self, item):
         generator_key = self.api_document[item]
@@ -33,7 +43,12 @@ class APIDocWorkshop(object):
         path = parsed_url.path
         return scheme, netloc, path
 
-    def set_generator(self, method, url, name=None):
+    def set_generator(self, generator_key, method, url_components, name=None):
+        self.generators[generator_key] = self.generator_class(
+            method, urlunparse(url_components), name=name
+        )
+
+    def add_generator(self, method, url, name=None):
         scheme, netloc, path = self.parse_url(url)
 
         method = method.upper()
@@ -45,8 +60,7 @@ class APIDocWorkshop(object):
         url_components = (
             scheme, netloc, rel_path, None, None, None
         )
-
-        self.generators[generator_key] = self.generator_class(method, urlunparse(url_components), name=name)
+        self.set_generator(generator_key, method, url_components, name)
 
     def get_generator(self, method, url):
         _, netloc, path = self.parse_url(url)
@@ -58,7 +72,7 @@ class APIDocWorkshop(object):
         generator_key = (method, netloc, rel_path)
         doc_generator = self.generators.get(generator_key)
         if not doc_generator:
-            self.set_generator(method, url)
+            self.add_generator(method, url)
             doc_generator = self.generators.get(generator_key)
 
         return doc_generator
@@ -71,13 +85,10 @@ class APIDocWorkshop(object):
         self.api_document[name] = (method, netloc, path)
 
     def save(self, file_path='.'):
-        for doc_generator in self.generators.values():
-            if doc_generator.exist_response:
-                doc_generator.save(file_path)
+        raise NotImplementedError
 
     def delete(self):
-        for doc_generator in self.generators.values():
-            doc_generator.delete()
+        raise NotImplementedError
 
     def match_path(self, netloc, path):
         rel_path = self.index.match(netloc, path)
@@ -91,6 +102,7 @@ class APIDocRouteMatcher(object):
     """
     Used to match which route the request address belongs to.
     """
+
     def __init__(self):
         self.maps: Dict[str, Map] = {}
         self.maps_adapter: Dict[str, MapAdapter] = {}
@@ -110,3 +122,4 @@ class APIDocRouteMatcher(object):
         rule_map.add(Rule(path, endpoint=path))
         self.maps[netloc] = rule_map
         self.maps_adapter[netloc] = rule_map.bind(server_name)
+

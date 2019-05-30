@@ -2,7 +2,8 @@
 __author__ = 'gzp'
 
 from .base import APIDocGenerator
+from .markdown import MarkdownGenerator
 
 __all__ = [
-    APIDocGenerator
+    APIDocGenerator, MarkdownGenerator
 ]

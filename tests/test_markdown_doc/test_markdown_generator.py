@@ -4,13 +4,32 @@ __author__ = 'gzp'
 import unittest
 import json
 
-from rimuru import APIDocGenerator
+from jinja2 import Environment, PackageLoader
+
+from rimuru.utils.jinja2 import filters
+
+from rimuru.core.doc_generator import (
+    MarkdownGenerator
+)
+
+template_env = Environment(loader=PackageLoader('rimuru', 'templates'))
+template_env.cache = None
+
+template_env.filters['success_responses_filter'] = filters.success_responses_filter
+template_env.filters['error_responses_filter'] = filters.error_responses_filter
+template = 'zh_hans_doc.md'
 
 
-class APIDocGeneratorTestCase(unittest.TestCase):
+class MarkdownGeneratorTestCase(unittest.TestCase):
     def setUp(self):
         self.api_name = 'Test API'
-        self.api_doc_gen = APIDocGenerator(method='get', url='/api/test', name=self.api_name)
+        self.api_doc_gen = MarkdownGenerator(
+            method='get',
+            url='/api/test',
+            template=template,
+            template_env=template_env,
+            name=self.api_name
+        )
         self.api_doc_gen.add_headers('Authorization', 'JWT eyJ0eXAiOiJKV...63XjrurF1bDlv478')
         self.api_doc_gen.add_params('test', 'test')
         self.api_doc_gen.add_response(200, json.dumps({'msg': 'success'}), body_type='json')

@@ -8,19 +8,21 @@ import json
 import requests as requests_module
 from multiprocessing import Process
 
-from rimuru import doc_client, APIDocWorkshop
+from rimuru import doc_client, MarkdownWorkShop
 from rimuru.utils.jinja2.filters import (
     success_responses_filter, error_responses_filter
 )
-from .test_service.flask_ import app
+from tests.test_service.flask_ import app
 
 os.environ['NO_PROXY'] = 'localhost'
+
+local_path = os.path.split(os.path.realpath(__file__))[0]
 
 
 class RequestsDecoratorTestCase(unittest.TestCase):
     def setUp(self):
-        self.api_document = APIDocWorkshop()
-        requests = doc_client(self.api_document, requests_module)
+        self.doc_workshop = MarkdownWorkShop()
+        requests = doc_client(self.doc_workshop, requests_module)
         self.client = requests
 
         self.app = app
@@ -33,16 +35,16 @@ class RequestsDecoratorTestCase(unittest.TestCase):
     def tearDown(self):
         self.flask_process.terminate()
         self.flask_process.join()
-        self.api_document.delete()
+        self.doc_workshop.delete()
 
     def test_doc_client(self):
         url = 'http://127.0.0.1:5000/api/books'
         method = 'GET'
         name = '书列表接口'
-        self.api_document.set_api_name(method=method, url=url, name=name)
+        self.doc_workshop.set_api_name(method=method, url=url, name=name)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        generator = self.api_document['书列表接口']
+        generator = self.doc_workshop['书列表接口']
 
         self.assertEqual(generator.method, method)
         self.assertEqual(generator.url, url)
@@ -68,8 +70,8 @@ class RequestsDecoratorTestCase(unittest.TestCase):
         url = 'http://127.0.0.1:5000/api/books/<int:id>'
         method = 'GET'
         name = '书详情接口'
-        self.api_document.set_api_name(method=method, url=url, name=name)
-        generator = self.api_document[name]
+        self.doc_workshop.set_api_name(method=method, url=url, name=name)
+        generator = self.doc_workshop[name]
 
         success_response = self.client.get('http://127.0.0.1:5000/api/books/2')
         error_response = self.client.get('http://127.0.0.1:5000/api/books/4')
@@ -78,8 +80,8 @@ class RequestsDecoratorTestCase(unittest.TestCase):
         self.assertEqual(json.loads(success_responses_filter(generator.responses)[0].body), success_response.json())
         self.assertEqual(json.loads(error_responses_filter(generator.responses)[0].body), error_response.json())
 
-        self.api_document.save(file_path='tests/')
-        for each_generator in self.api_document.generators.values():
+        self.doc_workshop.save(file_path=local_path)
+        for each_generator in self.doc_workshop.generators.values():
             self.assertEqual(each_generator.saved, True)
             with open(each_generator.file_path, 'r', encoding='utf-8') as f:
                 print(f.read())
