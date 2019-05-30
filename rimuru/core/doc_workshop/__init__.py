@@ -3,10 +3,13 @@ __author__ = 'gzp'
 
 from .base import (
     APIDocWorkshop,
-    APIDocRouteMatcher
+    APIDocRouteMatcher,
 )
+
+from .markdown import MarkdownWorkShop
 
 __all__ = [
     APIDocWorkshop,
-    APIDocRouteMatcher
+    APIDocRouteMatcher,
+    MarkdownWorkShop
 ]

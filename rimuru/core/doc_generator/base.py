@@ -2,8 +2,7 @@
 __author__ = 'gzp'
 
 import os
-import inspect
-import re
+from abc import ABC
 
 from jinja2 import Environment, PackageLoader
 
@@ -22,10 +21,7 @@ env.filters['success_responses_filter'] = filters.success_responses_filter
 env.filters['error_responses_filter'] = filters.error_responses_filter
 
 
-class APIDocGenerator(object):
-    template = 'zh_hans_doc.md'
-    env = env
-
+class APIDocGenerator(ABC):
     header_class = Header
     param_class = Param
     response_class = Response
@@ -69,21 +65,8 @@ class APIDocGenerator(object):
     def set_value(self, key, value):
         setattr(self, key, value)
 
-    def render(self):
-        template = env.get_template(self.template)
-        return template.render(**{attr: value for attr, value in inspect.getmembers(self)})
-
-    @classmethod
-    def pre_process(cls, content):
-        content = re.sub(r'\n{2,}', '\n\n', content)
-        return content
-
     def save(self, output):
-        file_suffix = self.template.split('.')[-1] if '.' in self.template else ''
-        path = os.path.join(output, '%s.%s' % (self.name, file_suffix))
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(self.pre_process(self.render()))
-            self.file_path = path
+        raise NotImplementedError
 
     def delete(self):
         if self.saved:

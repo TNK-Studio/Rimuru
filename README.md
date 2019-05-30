@@ -10,7 +10,7 @@
 - [x] requests   
 - [x] django.test.client
 - [ ] flask.testing.FlaskClient
-
+- [ ] pytest-tornado
 ## 生成格式
 - [x] markdown
 - [ ] swagger
